@@ -88,6 +88,8 @@ if(first() || dupefinished()){
             GoalTitle = FlagTitles[Index,string]
             holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(211,255,11),"models/effects/vol_light256x512.mdl")
             holoAlpha(3,255)
+            holoCreate(33,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
+            holoMaterial(33,"hlmv/debugmrmwireframe")
         }
         
     }
@@ -132,7 +134,7 @@ if(first() || dupefinished()){
         randPoint()
         randGoal()
         spawnMinge(FlagPoint)
-        
+
         # If Score is added, change message
         if(FlagScoreAdd){
             concmd("say "+"[Runics CTM] "+FlagHaver:name()+" put a Minge back! | Score: "+ Score[FlagHaver:steamID(),number] +" | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
@@ -178,12 +180,12 @@ if(first() || dupefinished()){
         RawFlagPoints:pushString("-92.285782 -2167.674805 -11071.968750")        # Spawn Area 1
         RawFlagPoints:pushString("-4123.109375 -6056.664551 -11079.968750")      # Crossing 1
         RawFlagPoints:pushString("-6678.682617 -7705.910645 -11071.471680")      # Garage Area 1
-        RawFlagPoints:pushString("-9169.187500 1414.988403 -11071.968750")       # Concrete Area 1
-        RawFlagPoints:pushString("-908.430664 2561.240723 -9279.968750")              # Two Room Apartment
+        #RawFlagPoints:pushString("-9169.187500 1414.988403 -11071.968750")       # Concrete Area 1
+        RawFlagPoints:pushString("-908.430664 2561.240723 -9279.968750")         # Two Room Apartment
         FlagTitles:pushString("Spawn")
         FlagTitles:pushString("Crossing")
         FlagTitles:pushString("Garage Area")
-        FlagTitles:pushString("Concrete Area")
+        #FlagTitles:pushString("Concrete Area")
         FlagTitles:pushString("Two Room Apartment Building")
     }
     
