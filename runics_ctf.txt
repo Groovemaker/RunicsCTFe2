@@ -1,7 +1,7 @@
 @name Runics Capture the Minge
 @inputs 
 @outputs 
-@persist [FlagRange FlagScoreAdd OldScore ScoreLimit]
+@persist [FlagRange FlagScoreAdd OldScore ScoreLimit Marker FlagMarker ShowMarker]
 @persist [RawFlagPoints FlagTitles FlagPoints]:array
 @persist [FlagHaver LastFlagHaver]:entity 
 @persist [LastPoint FlagPoint Goal]:vector 
@@ -29,12 +29,19 @@ if(first() || dupefinished()){
     # IMPORTANT: THE TITLE ARRAY MATCHES UP IN INDICES WITH THE POINTS ARRAY!
     
     # Init Variables
-    ScoreLimit = 10
-    FlagModel = "models/kleiner.mdl"
-    FlagRange = 200
-    PickSound = "items/battery_pickup.wav"
-    DropSound = "vo/k_lab/kl_ahhhh.wav"
-    WinSound = "vo/k_lab/kl_excellent.wav"
+    
+    # Config
+    ScoreLimit = 10                                     # How much Score til the game is won        <Number>        # DEFAULT: 10
+    FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
+    FlagRange = 200                                     # Pickup Range for the Flag                 <Number>        # DEFAULT: 200
+    PickSound = "items/battery_pickup.wav"              # Pickup Flag Sound                         <Sound Path>    # DEFAULT: "items/battery_pickup.wav"
+    DropSound = "vo/k_lab/kl_ahhhh.wav"                 # Drop Flag Sound                           <Sound Path>    # DEFAULT: "vo/k_lab/kl_ahhhh.wav"
+    WinSound = "vo/k_lab/kl_excellent.wav"              # Put Flag to Goal Sound                    <Sound Path>    # DEFAULT: "vo/k_lab/kl_excellent.wav"
+    ShowMarker = 1                                      # Show Goal Markers?                        <1=On 0=Off>    # DEFAULT: 1
+    ShowFlagMarker = 1                                  # Show Flag Markers when not picked up?     <1=On 0=Off>    # DEFAULT: 1  
+    # Hardcoded Vars
+    Marker = 33
+    FlagMarker = 34
     
     # Function Declarations
     
@@ -48,7 +55,9 @@ if(first() || dupefinished()){
     
     ## Pickup
     function pickup(Ply:entity){
-        
+        if(ShowMarker){
+            holoDelete(FlagMarker)
+        }
         holoCreate(1,Ply:toWorld(vec(0,0,164)),vec(1),ang(0,0,0),vec(255),FlagModel)
         holoAlpha(1,255)
         holoCreate(2,Ply:toWorld(vec(0,0,164))+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
@@ -88,8 +97,14 @@ if(first() || dupefinished()){
             GoalTitle = FlagTitles[Index,string]
             holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(211,255,11),"models/effects/vol_light256x512.mdl")
             holoAlpha(3,255)
-            holoCreate(33,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
-            holoMaterial(33,"hlmv/debugmrmwireframe")
+            if(ShowMarker){
+                holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
+                holoMaterial(Marker,"hlmv/debugmrmwireframe")
+            }
+            if(ShowFlagMarker){
+                holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(255,200,11),"hq_sphere")
+                holoMaterial(FlagMarker,"hlmv/debugmrmwireframe")
+            }
         }
         
     }
