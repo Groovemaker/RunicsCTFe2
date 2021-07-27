@@ -1,0 +1,237 @@
+@name Runics Capture the Minge
+@inputs 
+@outputs 
+@persist [FlagRange FlagScoreAdd OldScore ScoreLimit]
+@persist [RawFlagPoints FlagTitles FlagPoints]:array
+@persist [FlagHaver LastFlagHaver]:entity 
+@persist [LastPoint FlagPoint Goal]:vector 
+@persist [FlagTitle FlagModel PickSound GoalTitle WinSound DropSound]:string
+@persist [Score]:table
+
+#########################
+#   Made by Runic       #
+#      27.07.21         #
+#   Zero Hour: 10:30    #
+#########################
+
+
+# Hooks for Spawning and Dying
+runOnDeath(1)
+runOnSpawn(1)
+
+# When Spawned
+if(first() || dupefinished()){
+    
+    # Documentation:
+    
+    # To get a position for the game, put "getpos" in console and push that string into the points array 
+    # with an if statement of the current map, example down there.
+    # IMPORTANT: THE TITLE ARRAY MATCHES UP IN INDICES WITH THE POINTS ARRAY!
+    
+    # Init Variables
+    ScoreLimit = 10
+    FlagModel = "models/kleiner.mdl"
+    FlagRange = 200
+    PickSound = "items/battery_pickup.wav"
+    DropSound = "vo/k_lab/kl_ahhhh.wav"
+    WinSound = "vo/k_lab/kl_excellent.wav"
+    
+    # Function Declarations
+    
+    ## Timer Setup
+    function setupTimers(){
+        
+        # Main Loop
+        timer("main",1)
+        
+    }
+    
+    ## Pickup
+    function pickup(Ply:entity){
+        
+        holoCreate(1,Ply:toWorld(vec(0,0,164)),vec(1),ang(0,0,0),vec(255),FlagModel)
+        holoAlpha(1,255)
+        holoCreate(2,Ply:toWorld(vec(0,0,164))+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoAlpha(2,255)
+        FlagHaver = Ply
+        holoEntity(1):soundPlay(1,0,PickSound)
+        
+    }
+    
+    ## Flag Point Selector
+    function randPoint(){
+        
+        LastPoint = FlagPoint
+        Index = randint(1,FlagPoints:count())
+        NewPoint = FlagPoints[Index,vector]
+        
+        if(NewPoint == LastPoint || NewPoint == Goal){
+            randPoint()
+        }else{
+            FlagPoint = NewPoint
+            FlagTitle = FlagTitles[Index,string]
+        }
+        
+    }
+    
+    ## Goal Point Selector
+    function randGoal(){
+        
+        LastPoint = Goal
+        Index = randint(1,FlagPoints:count())
+        NewPoint = FlagPoints[Index,vector]
+        
+        if(NewPoint == LastPoint || NewPoint == FlagPoint){
+            randGoal()
+        }else{
+            Goal = NewPoint
+            GoalTitle = FlagTitles[Index,string]
+            holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(211,255,11),"models/effects/vol_light256x512.mdl")
+            holoAlpha(3,255)
+        }
+        
+    }
+    
+    ## Minge Spawner
+    function spawnMinge(PT:vector){
+        
+        holoCreate(1,PT,vec(1),ang(0,0,0),vec(255),FlagModel)
+        holoAlpha(1,255)
+        holoCreate(2,PT+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoAlpha(2,255)
+        
+    }
+    
+    ## Minge Drop function
+    function dropMinge(P:entity){
+        
+        holoCreate(1,P:pos()+vec(0,0,64),vec(1),ang(0,0,0),vec(255),FlagModel)
+        holoAlpha(1,255)
+        holoCreate(2,P:pos()+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoAlpha(2,255)
+        holoEntity(1):soundPlay(2,0,DropSound)
+        concmd("say "+"[Runics CTM] The Minge has been dropped!")
+        
+    }
+        
+    ## Parse Flag Points from Console
+    function parseFlagPoints(){
+        
+        foreach(K,V:string = RawFlagPoints){
+            Point = V:replace(" ",","):explode(",")
+            FlagPoints:pushVector(vec(Point[1,string]:toNumber(),Point[2,string]:toNumber(),Point[3,string]:toNumber())-vec(0,0,64))
+            printColor(vec(155,255,0),"[Runics CTM] Parsed Flag Point: "+V+" | Title: "+FlagTitles[K,string])
+        }
+        
+    }
+    
+    ## New Points
+    function new(){
+        
+        # Get New Point and Goal
+        randPoint()
+        randGoal()
+        spawnMinge(FlagPoint)
+        
+        # If Score is added, change message
+        if(FlagScoreAdd){
+            concmd("say "+"[Runics CTM] "+FlagHaver:name()+" put a Minge back! | Score: "+ Score[FlagHaver:steamID(),number] +" | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
+            FlagScoreAdd = 0
+        }else{
+            concmd("say "+"[Runics CTM] Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
+        }
+        
+        # Reset Flag Haver
+        FlagHaver = entity()
+        LastFlagHaver = entity()
+        
+    }
+    
+    ## Score is added to player
+    function addscore(Ply:entity){
+        FlagScoreAdd = 1
+        OldScore = Score[Ply:steamID(),number]
+        if(OldScore == 0){ Score[Ply:steamID(),number] = 1 }else{ Score[Ply:steamID(),number] = (OldScore + 1) } 
+        holoEntity(1):soundPlay(1,0,WinSound)
+        if(Score[Ply:steamID(),number] >= ScoreLimit){
+            concmd("say "+"[Runics CTM] "+Ply:name()+" wins the game! Well memed.")
+            selfDestruct()
+        }else{
+            new()
+        }
+    }
+    
+    ## Init Function
+    function init(){
+        foreach(K,V:entity = players()){
+            Score[V:steamID(),number] = 0
+        }
+        parseFlagPoints()
+        setupTimers()
+        new()
+    }
+    
+    # Flag Points and Goals 
+       
+    ## Bigcity
+    if(map() == "gm_bigcity"){
+        RawFlagPoints:pushString("-92.285782 -2167.674805 -11071.968750")        # Spawn Area 1
+        RawFlagPoints:pushString("-4123.109375 -6056.664551 -11079.968750")      # Crossing 1
+        RawFlagPoints:pushString("-6678.682617 -7705.910645 -11071.471680")      # Garage Area 1
+        RawFlagPoints:pushString("-9169.187500 1414.988403 -11071.968750")       # Concrete Area 1
+        RawFlagPoints:pushString("-908.430664 2561.240723 -9279.968750")              # Two Room Apartment
+        FlagTitles:pushString("Spawn")
+        FlagTitles:pushString("Crossing")
+        FlagTitles:pushString("Garage Area")
+        FlagTitles:pushString("Concrete Area")
+        FlagTitles:pushString("Two Room Apartment Building")
+    }
+    
+    # If there are no documented flag points on the map, exit
+    if(RawFlagPoints:count() < 1){
+        error("This Map hasn't been charted yet.")
+    }
+    
+    # Call Init function     
+    init()
+    
+}
+
+# Main Loop
+if(clk("main")){
+    
+    # Pick up loop
+    foreach(K,V:entity = players()){
+        if(V:pos():distance(holoEntity(1):pos()) < FlagRange && !FlagHaver:isPlayer() && V != LastFlagHaver){
+            concmd("say "+"[Runics CTM] "+V:name()+" picked up the Minge!")
+            pickup(V)
+        }
+    }
+    
+    # Goal loop
+    if(FlagHaver:isPlayer()){
+        holoPos(1,FlagHaver:toWorld(vec(0,0,164)))
+        holoPos(2,FlagHaver:toWorld(vec(0,0,164+333)))
+        if(FlagHaver:pos():distance(Goal) < FlagRange){
+            addscore(FlagHaver)
+        }
+    }
+    timer("main",10)
+        
+}
+
+# If FlagHaver dies, drop the Minge for someone else to take
+if(deathClk()){
+    if(lastDeathVictim() == FlagHaver && FlagHaver:isPlayer()){
+            LastFlagHaver = FlagHaver
+            FlagHaver = entity()
+            dropMinge(LastFlagHaver)
+    }
+}
+
+# If the Person that dropped the minge spawns, he can pick it up again
+if(spawnClk()){
+    if(lastSpawnedPlayer() == LastFlagHaver && LastFlagHaver:isPlayer()){
+            LastFlagHaver = entity()
+    }
+}
