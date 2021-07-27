@@ -41,7 +41,7 @@ if(first() || dupefinished()){
     # Init Variables
     
     # Config
-    Game = 2                                            # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    Game = 1                                            # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 10                                     # How much Score til the game is won        <Number>        # DEFAULT: 10
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
     FlagRange = 200                                     # Pickup Range for the Flag                 <Number>        # DEFAULT: 200
@@ -100,16 +100,13 @@ if(first() || dupefinished()){
         if(ShowMarker){
             holoDelete(FlagMarker)
         }
-        
+        FlagHaver = Ply        
         holoCreate(1,Ply:toWorld(vec(0,0,164)),vec(1),ang(0,0,0),vec(255),FlagModel)
         holoAlpha(1,255)
         holoCreate(2,Ply:toWorld(vec(0,0,164))+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
         holoAlpha(2,255)
         if(Game == TDM){
-            FlagHaver = Ply
             TeamHaver = TeamMembers[Ply:steamID(),number]
-            print(TeamHaver)
-            print(TeamColors[TeamHaver,vector])
             holoColor(2,TeamColors[TeamHaver,vector])
         }
         holoEntity(1):soundPlay(1,0,PickSound)
