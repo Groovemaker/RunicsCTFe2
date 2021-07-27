@@ -1,7 +1,7 @@
 @name Runics Capture the Minge
 @inputs 
 @outputs 
-@persist [FlagRange FlagScoreAdd OldScore ScoreLimit Marker FlagMarker ShowMarker]
+@persist [FlagRange FlagScoreAdd OldScore ScoreLimit Marker FlagMarker ShowMarker ShowFlagMarker]
 @persist [RawFlagPoints FlagTitles FlagPoints]:array
 @persist [FlagHaver LastFlagHaver]:entity 
 @persist [LastPoint FlagPoint Goal]:vector 
@@ -98,14 +98,6 @@ if(first() || dupefinished()){
             GoalTitle = FlagTitles[Index,string]
             holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(211,255,11),"models/effects/vol_light256x512.mdl")
             holoAlpha(3,255)
-            if(ShowMarker){
-                holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
-                holoMaterial(Marker,"hlmv/debugmrmwireframe")
-            }
-            if(ShowFlagMarker){
-                holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(255,200,11),"hq_sphere")
-                holoMaterial(FlagMarker,"hlmv/debugmrmwireframe")
-            }
         }
         
     }
@@ -163,6 +155,15 @@ if(first() || dupefinished()){
         FlagHaver = entity()
         LastFlagHaver = entity()
         
+        # Markers, if Enabled.
+        if(ShowMarker){
+            holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
+            holoMaterial(Marker,"hlmv/debugmrmwireframe")
+        }
+        if(ShowFlagMarker){
+            holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(255,200,11),"hq_sphere")
+            holoMaterial(FlagMarker,"hlmv/debugmrmwireframe")
+        }        
     }
     
     ## Score is added to player
