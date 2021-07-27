@@ -39,7 +39,8 @@ if(first() || dupefinished()){
     WinSound = "vo/k_lab/kl_excellent.wav"              # Put Flag to Goal Sound                    <Sound Path>    # DEFAULT: "vo/k_lab/kl_excellent.wav"
     ShowMarker = 1                                      # Show Goal Markers?                        <1=On 0=Off>    # DEFAULT: 1
     ShowFlagMarker = 1                                  # Show Flag Markers when not picked up?     <1=On 0=Off>    # DEFAULT: 1  
-    # Hardcoded Vars
+    
+    # Hardcoded Vars | DO NOT CHANGE!
     Marker = 33
     FlagMarker = 34
     
