@@ -302,9 +302,9 @@ if(first() || dupefinished()){
         }else{
             if(FirstRun){
                 if(Game == FFA){
-                    concmd("say "+"[Runics CTM] NEW ROUND STARTED! | Gamemode is: FFA | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
+                    concmd("say "+"[Runics CTM] NEW ROUND STARTED! | Score Limit: "+ScoreLimit+" | Gamemode is: FFA | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
                 }else{
-                    concmd("say "+"[Runics CTM] NEW ROUND STARTED! | Gamemode is: Team CTF | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
+                    concmd("say "+"[Runics CTM] NEW ROUND STARTED! | Score Limit: "+ScoreLimit+" | Gamemode is: Team CTF | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
                 }
                 FirstRun = 0
             }else{
