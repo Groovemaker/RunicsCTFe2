@@ -33,6 +33,10 @@ runOnChat(1)
 # When Spawned
 if(first() || dupefinished()){
     
+    # Gamemode IDs, better leave them as is
+    FFA = 1
+    TDM = 2
+    
     # Flag Points and Goals 
        
     ## Bigcity
@@ -92,8 +96,8 @@ if(first() || dupefinished()){
     # Init Variables
     
     # Config
-    Game = 2                                            # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
-    ScoreLimit = 7                                     # How much Score til the game is won        <Number>        # DEFAULT: 10
+    Game = FFA                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    ScoreLimit = 5                                      # How much Score til the game is won        <Number>        # DEFAULT: 10
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
     FlagRange = 200                                     # Pickup Range for the Flag                 <Number>        # DEFAULT: 200
     PickSound = "items/battery_pickup.wav"              # Pickup Flag Sound                         <Sound Path>    # DEFAULT: "items/battery_pickup.wav"
@@ -104,15 +108,13 @@ if(first() || dupefinished()){
     Team1 = "Minges"                                    # Team 1 Name                               <string>        # DEFAULT: "Minges"
     Team2 = "Cops"                                      # Team 2 Name                               <string>        # DEFAULT: "Builders"
     
-    TeamColors[1,vector] = vec(255,55,55)
-    TeamColors[2,vector] = vec(55,155,255)    
+    TeamColors[1,vector] = vec(55,130,255)
+    TeamColors[2,vector] = vec(255,77,11)    
     
     # Hardcoded Vars | DO NOT CHANGE!
     Marker = 33
     FlagMarker = 34
     FirstRun = 1
-    FFA = 1
-    TDM = 2
     TeamNames[1,string] = Team1
     TeamNames[2,string] = Team2
     Separator = toUnicodeChar(9612)
@@ -328,8 +330,8 @@ if(first() || dupefinished()){
     ## Score is added to player
     function addscore(Ply:entity){
         FlagScoreAdd = 1
-        OldScore = Score[Ply:steamID(),number]
-        if(OldScore == 0){ Score[Ply:steamID(),number] = 1 }else{ Score[Ply:steamID(),number] = (OldScore + 1) } 
+        NewScore = (Score[Ply:steamID(),number] + 1)
+        Score[Ply:steamID(),number] = NewScore
         holoCreate(55)
         holoPos(55,Goal)
         holoAlpha(55,0)
@@ -344,7 +346,8 @@ if(first() || dupefinished()){
     
     function addscoreteam(Team:number){
         FlagScoreAdd = 1
-        TeamScore[Team,number] = (TeamScore[Team,number] + 1)
+        NewScore = (TeamScore[Team,number] + 1)
+        TeamScore[Team,number] = NewScore
         holoCreate(55)
         holoPos(55,Goal)
         holoAlpha(55,0)
@@ -454,7 +457,7 @@ if(spawnClk()){
             LastFlagHaver = entity()
     }
 }
-if(changed(players():count())){
+if(changed(players():count()) && Game == TDM){
     concmd("say [Runics CTM] Rebalancing...")
     rebalance()
     timer("PrintTeam1",1500)
@@ -476,5 +479,11 @@ if(chatClk(owner())){
         rebalance()
         timer("PrintTeam1",1500)
         timer("PrintTeam2",2500)    
+    }
+    if(lastSaid() == "~drop"){
+        concmd("say [Runics CTM] Reset the Flag...")
+        LastFlagHaver = FlagHaver
+        FlagHaver = entity()
+        dropMinge(LastFlagHaver)
     }
 }
