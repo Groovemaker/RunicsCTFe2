@@ -28,6 +28,7 @@
 # Hooks for Spawning and Dying
 runOnDeath(1)
 runOnSpawn(1)
+runOnChat(1)
 
 # When Spawned
 if(first() || dupefinished()){
@@ -41,7 +42,7 @@ if(first() || dupefinished()){
     # Init Variables
     
     # Config
-    Game = 1                                            # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    Game = 2                                            # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 10                                     # How much Score til the game is won        <Number>        # DEFAULT: 10
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
     FlagRange = 200                                     # Pickup Range for the Flag                 <Number>        # DEFAULT: 200
@@ -51,7 +52,7 @@ if(first() || dupefinished()){
     ShowMarker = 1                                      # Show Goal Markers?                        <1=On 0=Off>    # DEFAULT: 1
     ShowFlagMarker = 1                                  # Show Flag Markers when not picked up?     <1=On 0=Off>    # DEFAULT: 1      
     Team1 = "Minges"                                    # Team 1 Name                               <string>        # DEFAULT: "Minges"
-    Team2 = "Builders"                                  # Team 2 Name                               <string>        # DEFAULT: "Builders"
+    Team2 = "Cops"                                      # Team 2 Name                               <string>        # DEFAULT: "Builders"
     
     TeamColors[1,vector] = vec(255,55,55)
     TeamColors[2,vector] = vec(55,155,255)    
@@ -85,7 +86,27 @@ if(first() || dupefinished()){
             State = !State
         }
     }
-    
+    function rebalance(){
+        Plys = players()
+        State = !State
+        TeamMembers = table()
+        Team1M = array()
+        Team1Ent = array()
+        Team2M = array()
+        Team2Ent = array()
+        foreach(K,V:entity = Plys){
+            if(State){
+                TeamMembers[V:steamID(),number] = 1
+                Team1M:pushString(V:name())
+                Team1Ent:pushEntity(V)
+            }else{
+                TeamMembers[V:steamID(),number] = 2
+                Team2M:pushString(V:name())
+                Team2Ent:pushEntity(V)
+            }
+            State = !State
+        }
+    }    
     ## Timer Setup
     function setupTimers(){
         
@@ -400,6 +421,12 @@ if(spawnClk()){
             LastFlagHaver = entity()
     }
 }
+if(changed(players():count())){
+    concmd("say [Runics CTM] Rebalancing...")
+    rebalance()
+    timer("PrintTeam1",1500)
+    timer("PrintTeam2",2500)
+}
 
 # Print Team if Gamemode == TDM
 if(clk("PrintTeam1")){    
@@ -407,4 +434,14 @@ if(clk("PrintTeam1")){
 }
 if(clk("PrintTeam2")){
     concmd("say ["+Team2+"]: "+Team2M:concat(" "))
+}
+
+# Commands
+if(chatClk(owner())){
+    if(lastSaid() == "~rebalance"){
+        concmd("say [Runics CTM] Rebalancing...")
+        rebalance()
+        timer("PrintTeam1",1500)
+        timer("PrintTeam2",2500)    
+    }
 }
