@@ -10,7 +10,7 @@
 @persist [FlagHaver LastFlagHaver]:entity
 
 # Vectors
-@persist [LastPoint FlagPoint Goal]:vector 
+@persist [LastPoint FlagPoint Goal GoalColor FlagColor]:vector 
 
 # Strings
 @persist [FlagTitle FlagModel PickSound GoalTitle WinSound DropSound  Team1 Team2 Separator]:string
@@ -93,24 +93,38 @@ if(first() || dupefinished()){
     # with an if statement of the current map, example down there.
     # IMPORTANT: THE TITLE ARRAY MATCHES UP IN INDICES WITH THE POINTS ARRAY!
     
-    # Init Variables
+
     
-    # Config
+    #################################################################################################################################################################
+    #################################################### GAMEMODE CONFIG ############################################################################################
+    ##################################### Edit your Settings here, its like a server.cfg in Source Engine. ##########################################################
+    #################################################################################################################################################################
+    
     Game = FFA                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 5                                      # How much Score til the game is won        <Number>        # DEFAULT: 10
+    
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
     FlagRange = 200                                     # Pickup Range for the Flag                 <Number>        # DEFAULT: 200
+    
     PickSound = "items/battery_pickup.wav"              # Pickup Flag Sound                         <Sound Path>    # DEFAULT: "items/battery_pickup.wav"
     DropSound = "vo/k_lab/kl_ahhhh.wav"                 # Drop Flag Sound                           <Sound Path>    # DEFAULT: "vo/k_lab/kl_ahhhh.wav"
     WinSound = "vo/k_lab/kl_excellent.wav"              # Put Flag to Goal Sound                    <Sound Path>    # DEFAULT: "vo/k_lab/kl_excellent.wav"
+    
     ShowMarker = 1                                      # Show Goal Markers?                        <1=On 0=Off>    # DEFAULT: 1
     ShowFlagMarker = 1                                  # Show Flag Markers when not picked up?     <1=On 0=Off>    # DEFAULT: 1      
+    
     Team1 = "Minges"                                    # Team 1 Name                               <string>        # DEFAULT: "Minges"
     Team2 = "Cops"                                      # Team 2 Name                               <string>        # DEFAULT: "Builders"
     
-    TeamColors[1,vector] = vec(55,130,255)
-    TeamColors[2,vector] = vec(255,77,11)    
+    FlagColor = vec(255,200,11)                         # Flag Color                                <vector>        # DEFAULT: vec(255,200,11)
+    GoalColor = vec(210,255,11)                         # Goal Color                                <vector>        # DEFAULT: vec(210,255,11)
     
+    TeamColors[1,vector] = vec(55,130,255)              # Team1 Color                               <vector>        # DEFAULT: vec(55,130,255)
+    TeamColors[2,vector] = vec(255,77,11)               # Team2 Color                               <vector>        # DEFAULT: vec(255,77,11)
+    
+    ################################################################################################################################################################
+    
+    # Init Variables
     # Hardcoded Vars | DO NOT CHANGE!
     Marker = 33
     FlagMarker = 34
@@ -200,7 +214,7 @@ if(first() || dupefinished()){
         FlagHaver = Ply        
         holoCreate(1,Ply:toWorld(vec(0,0,164)),vec(1),ang(0,0,0),vec(255),FlagModel)
         holoAlpha(1,255)
-        holoCreate(2,Ply:toWorld(vec(0,0,164))+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoCreate(2,Ply:toWorld(vec(0,0,164))+vec(0,0,333),vec(1,1,1),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
         holoAlpha(2,255)
         if(Game == TDM){
             TeamHaver = TeamMembers[Ply:steamID(),number]
@@ -238,7 +252,7 @@ if(first() || dupefinished()){
         }else{
             Goal = NewPoint
             GoalTitle = FlagTitles[Index,string]
-            holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(211,255,11),"models/effects/vol_light256x512.mdl")
+            holoCreate(3,Goal+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),GoalColor,"models/effects/vol_light256x512.mdl")
             holoAlpha(3,255)
         }
         
@@ -249,7 +263,7 @@ if(first() || dupefinished()){
         
         holoCreate(1,PT,vec(1),ang(0,0,0),vec(255),FlagModel)
         holoAlpha(1,255)
-        holoCreate(2,PT+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoCreate(2,PT+vec(0,0,333),vec(1,1,1),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
         holoAlpha(2,255)
         
     }
@@ -259,11 +273,11 @@ if(first() || dupefinished()){
         
         holoCreate(1,P:pos()+vec(0,0,64),vec(1),ang(0,0,0),vec(255),FlagModel)
         holoAlpha(1,255)
-        holoCreate(2,P:pos()+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),vec(255,200,11),"models/effects/vol_light256x512.mdl")
+        holoCreate(2,P:pos()+vec(0,0,64)+vec(0,0,333),vec(1,1,1),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
         holoAlpha(2,255)
         holoEntity(1):soundPlay(2,0,DropSound)
         if(ShowFlagMarker){
-            holoCreate(FlagMarker,holoEntity(1):pos()+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(255,200,11),"hq_sphere")
+            holoCreate(FlagMarker,holoEntity(1):pos()+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),FlagColor,"hq_sphere")
             holoMaterial(FlagMarker,"hlmv/debugmrmwireframe")
         }
         TeamHaver = 1337
@@ -322,11 +336,11 @@ if(first() || dupefinished()){
         
         # Markers, if Enabled.
         if(ShowMarker){
-            holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(211,255,11),"hq_sphere")
+            holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),GoalColor,"hq_sphere")
             holoMaterial(Marker,"hlmv/debugmrmwireframe")
         }
         if(ShowFlagMarker){
-            holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),vec(255,200,11),"hq_sphere")
+            holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,333),vec(11),ang(0,0,0),FlagColor,"hq_sphere")
             holoMaterial(FlagMarker,"hlmv/debugmrmwireframe")
         }        
     }
