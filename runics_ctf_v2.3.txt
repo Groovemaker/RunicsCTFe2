@@ -1,5 +1,8 @@
 @name Runics Capture the Minge
 
+# Inputs
+@inputs HUD_EGP:wirelink
+
 # Numbers
 @persist [FlagRange FlagScoreAdd OldScore ScoreLimit Marker FlagMarker ShowMarker ShowFlagMarker Game FirstRun TeamHaver LastTeamHaver FFA TDM PERFER]
 
@@ -32,7 +35,7 @@ runOnChat(1)
 
 # When Spawned
 if(first() || dupefinished()){
-    
+       
     # Gamemode IDs, better leave them as is
     FFA = 1
     TDM = 2
@@ -100,7 +103,7 @@ if(first() || dupefinished()){
     ##################################### Edit your Settings here, its like a server.cfg in Source Engine. ##########################################################
     #################################################################################################################################################################
     
-    Game = FFA                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    Game = TDM                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 5                                      # How much Score til the game is won        <Number>        # DEFAULT: 10
     
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
@@ -186,32 +189,52 @@ if(first() || dupefinished()){
         foreach(K,V:entity = Plys){
             if(State){
                 TeamMembers[V:steamID(),number] = 1
+                Team2M:removeString(Team2M:getIndex(V:name()))
+                Team2Ent:removeString(Team2Ent:getIndex(V))
                 Team1M:pushString(V:name())
                 Team1Ent:pushEntity(V)
             }else{
                 TeamMembers[V:steamID(),number] = 2
+                Team1M:removeString(Team1M:getIndex(V:name()))
+                Team1Ent:removeString(Team1Ent:getIndex(V))
                 Team2M:pushString(V:name())
                 Team2Ent:pushEntity(V)
             }
             State = !State
         }
-    }    
+    }
     
+    # 2D EGP HUD
+    function draw2dhud(){
+        HUD_EGP:egpClear()
+        HUD_EGP:egpBox(1,vec2(650+75,1070),vec2(333,150))
+        HUD_EGP:egpBox(2,vec2(1250-75,1070),vec2(333,150))
+        
+        HUD_EGP:egpTextLayout(5,Team1+" |               "+TeamScore[1,number],vec2(600,1030),vec2(555,333))
+        HUD_EGP:egpTextLayout(6,Team2+" |               "+TeamScore[2,number],vec2(1250-200,1030), vec2(555,333))
+        HUD_EGP:egpFont(5,"",33)
+        HUD_EGP:egpFont(6,"",33)
+        
+        HUD_EGP:egpMaterial(1,"gui/gradient_up")
+        HUD_EGP:egpMaterial(2,"gui/gradient_up")
+        HUD_EGP:egpColor(1,TeamColors[1,vector])
+        HUD_EGP:egpColor(2,TeamColors[2,vector])
+    }    
     # Set Ply Team
     function jointeam(Ply:entity,Team){
         if(Team == 1 || Team == 2){
             if(Team == 1){
                 TeamMembers[Ply:steamID(),number] = 1
-                Team1M:pushString(Ply:name())
-                Team1Ent:pushEntity(Ply)
                 Team2M:removeString(Team2M:getIndex(Ply:name()))
                 Team2Ent:removeString(Team2Ent:getIndex(Ply))
+                Team1M:pushString(Ply:name())
+                Team1Ent:pushEntity(Ply)
             }else{
                 TeamMembers[Ply:steamID(),number] = 2
-                Team2M:pushString(Ply:name())
-                Team2Ent:pushEntity(Ply)
                 Team1M:removeString(Team1M:getIndex(Ply:name()))
                 Team1Ent:removeString(Team1Ent:getIndex(Ply))
+                Team2M:pushString(Ply:name())
+                Team2Ent:pushEntity(Ply)
             }
         concmd("say "+"[Runics CTM] Player "+Ply:name()+" joined ["+TeamNames[Team,string]+"].")
         timer("PrintTeam1",1500)
@@ -432,7 +455,8 @@ if(first() || dupefinished()){
 
 # Main Loop
 if(clk("main")){
-    
+    # 2D HUD Drawing
+    draw2dhud()
     # 3D HUD Loops
     foreach(K:number,V:entity = Team1HUD){
         Index = K+40
