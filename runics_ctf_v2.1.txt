@@ -450,8 +450,9 @@ if(clk("main")){
 if(deathClk()){
     if(lastDeathVictim() == FlagHaver && FlagHaver:isPlayer()){
             LastFlagHaver = FlagHaver
+            dropMinge(FlagHaver)
             FlagHaver = entity()
-            dropMinge(LastFlagHaver)
+
     }
 }
 
