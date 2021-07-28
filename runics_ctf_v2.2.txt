@@ -277,7 +277,7 @@ if(first() || dupefinished()){
         holoAlpha(2,255)
         holoEntity(1):soundPlay(2,0,DropSound)
         if(ShowFlagMarker){
-            holoCreate(FlagMarker,holoEntity(1):pos()+vec(0,0,64)+vec(0,0,13600),vec(1,1,33),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
+            holoCreate(FlagMarker,holoEntity(1):pos()+vec(0,0,64)+vec(0,0,10000),vec(1,1,22),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
         }
         TeamHaver = 1337
         concmd("say "+"[Runics CTM] The Minge has been dropped!")
@@ -335,10 +335,10 @@ if(first() || dupefinished()){
         
         # Markers, if Enabled.
         if(ShowMarker){
-            holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,13600),vec(1,1,33),ang(0,0,0),GoalColor,"models/effects/vol_light256x512.mdl")
+            holoCreate(Marker,Goal+vec(0,0,64)+vec(0,0,10000),vec(1,1,22),ang(0,0,0),GoalColor,"models/effects/vol_light256x512.mdl")
         }
         if(ShowFlagMarker){
-            holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,13600),vec(1,1,33),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
+            holoCreate(FlagMarker,FlagPoint+vec(0,0,64)+vec(0,0,10000),vec(1,1,22),ang(0,0,0),FlagColor,"models/effects/vol_light256x512.mdl")
         }        
     }
     
