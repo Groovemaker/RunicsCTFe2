@@ -13,7 +13,7 @@
 @persist [LastPoint FlagPoint Goal GoalColor FlagColor]:vector 
 
 # Strings
-@persist [FlagTitle FlagModel PickSound GoalTitle WinSound DropSound  Team1 Team2 Separator]:string
+@persist [FlagTitle FlagModel PickSound GoalTitle WinSound DropSound  Team1 Team2 Separator LogStr]:string
 
 # Tables
 @persist [Score TeamScore TeamMembers]:table
@@ -511,24 +511,36 @@ if(clk("PrintTeam2")){
 if(clk("PostInit")){
     inithud()
 }
+
 # Commands
 if(chatClk(owner())){
     ARGS = lastSaid():explode(" ")
     if(lastSaid() == "~rebalance"){
-        concmd("say [Runics CTM] Rebalancing...")
+        hideChat(1)
+        LogStr = "[Runics CTM] "+owner():name()+" Rebalanced the Teams."
+        timer("chatlog",600)
         rebalance()
         timer("PrintTeam1",1500)
         timer("PrintTeam2",2500)    
     }
     if(lastSaid() == "~drop"){
-        concmd("say [Runics CTM] Reset the Flag...")
+        hideChat(1)
+        LogStr = "[Runics CTM] "+owner():name()+" Reset the Flag."
         LastFlagHaver = FlagHaver
         FlagHaver = entity()
+        timer("chatlog",600)
         dropMinge(LastFlagHaver)
     }
     if(ARGS[1,string] == "~team"){
+        hideChat(1)
         TPly = findPlayerByName(ARGS[2,string])
+        LogStr = "[Runics CTM] "+owner():name()+" Adjusted "+TPly:name()+"'s Team"
         TM = ARGS[3,string]
+        timer("chatlog",600)
         jointeam(TPly,TM:toNumber())
     }
+}
+
+if(clk("chatlog")){
+    concmd("say "+LogStr)
 }
