@@ -159,7 +159,6 @@ if(first() || dupefinished()){
         foreach(K,V:entity = players()){  
             Index = K+40
             holoCreate(Index)
-            print(TeamMembers[V:steamID(),number])
             if(TeamMembers[V:steamID(),number] == 1){
                 Team1HUD[K, entity] = V
                 holoVisible(Index,Team2HUD,0)
@@ -531,6 +530,5 @@ if(chatClk(owner())){
         TPly = findPlayerByName(ARGS[2,string])
         TM = ARGS[3,string]
         jointeam(TPly,TM:toNumber())
-        #print(TeamMembers)
     }
 }
