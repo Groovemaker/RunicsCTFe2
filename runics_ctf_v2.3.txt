@@ -100,7 +100,7 @@ if(first() || dupefinished()){
     ##################################### Edit your Settings here, its like a server.cfg in Source Engine. ##########################################################
     #################################################################################################################################################################
     
-    Game = FFA                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    Game = TDM                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 5                                      # How much Score til the game is won        <Number>        # DEFAULT: 10
     
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
@@ -333,7 +333,7 @@ if(first() || dupefinished()){
                 concmd("say "+"[Runics CTM] "+FlagHaver:name()+" put a Minge back! | Score: "+ Score[FlagHaver:steamID(),number] +" | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")
             # Score Team Deathmatch
             }else{          
-                concmd("say "+"[Runics CTM] The "+TeamNames[TeamHaver,string]+" put a Minge back! | Score: "+ Score[FlagHaver:steamID(),number] +" | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")    
+                concmd("say "+"[Runics CTM] The "+TeamNames[TeamHaver,string]+" put a Minge back! | Score: "+ TeamScore[TeamHaver,number] +" | Origin is: ["+FlagTitle+"] | Goal is: ["+GoalTitle+"]")    
             }
             
             # Reset FlagScore Trigger
