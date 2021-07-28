@@ -204,14 +204,14 @@ if(first() || dupefinished()){
                 TeamMembers[Ply:steamID(),number] = 1
                 Team1M:pushString(Ply:name())
                 Team1Ent:pushEntity(Ply)
-                #Team2M:removeString(Team2M:getIndex(Ply:name()))
-                #Team2Ent:removeString(Team2Ent:getIndex(Ply))
+                Team2M:removeString(Team2M:getIndex(Ply:name()))
+                Team2Ent:removeString(Team2Ent:getIndex(Ply))
             }else{
                 TeamMembers[Ply:steamID(),number] = 2
                 Team2M:pushString(Ply:name())
                 Team2Ent:pushEntity(Ply)
-                #Team1M:removeString(Team1M:getIndex(Ply:name()))
-                #Team1Ent:removeString(Team1Ent:getIndex(Ply))
+                Team1M:removeString(Team1M:getIndex(Ply:name()))
+                Team1Ent:removeString(Team1Ent:getIndex(Ply))
             }
         concmd("say "+"[Runics CTM] Player "+Ply:name()+" joined ["+TeamNames[Team,string]+"].")
         timer("PrintTeam1",1500)
