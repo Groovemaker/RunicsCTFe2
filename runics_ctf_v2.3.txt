@@ -100,7 +100,7 @@ if(first() || dupefinished()){
     ##################################### Edit your Settings here, its like a server.cfg in Source Engine. ##########################################################
     #################################################################################################################################################################
     
-    Game = TDM                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
+    Game = FFA                                          # FFA or Team Deathmatch?                   <1=FFA 2=TDM>   # DEFAULT: 1 - Free For All
     ScoreLimit = 5                                      # How much Score til the game is won        <Number>        # DEFAULT: 10
     
     FlagModel = "models/kleiner.mdl"                    # Which model is the flag?                  <Model Path>    # DEFAULT: "models/kleiner.mdl"
