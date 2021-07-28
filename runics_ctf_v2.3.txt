@@ -515,24 +515,21 @@ if(clk("PostInit")){
 # Commands
 if(chatClk(owner())){
     ARGS = lastSaid():explode(" ")
-    if(lastSaid() == "~rebalance"){
-        hideChat(1)
+    if(lastSaid() == "-rebalance"){
         LogStr = "[Runics CTM] "+owner():name()+" Rebalanced the Teams."
         timer("chatlog",600)
         rebalance()
         timer("PrintTeam1",1500)
         timer("PrintTeam2",2500)    
     }
-    if(lastSaid() == "~drop"){
-        hideChat(1)
+    if(lastSaid() == "-drop"){
         LogStr = "[Runics CTM] "+owner():name()+" Reset the Flag."
         LastFlagHaver = FlagHaver
         FlagHaver = entity()
         timer("chatlog",600)
         dropMinge(LastFlagHaver)
     }
-    if(ARGS[1,string] == "~team"){
-        hideChat(1)
+    if(ARGS[1,string] == "-team"){
         TPly = findPlayerByName(ARGS[2,string])
         LogStr = "[Runics CTM] "+owner():name()+" Adjusted "+TPly:name()+"'s Team"
         TM = ARGS[3,string]
